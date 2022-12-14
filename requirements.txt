@@ -1,0 +1,8 @@
+aiohttp==3.8.1
+emoji==2.0.0
+httpx==0.23.1
+loguru==0.6.0
+nonebot==1.9.1
+Pillow==9.3.0
+pydantic==1.9.1
+PyMySQL==1.0.2

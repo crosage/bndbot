@@ -1,0 +1,4 @@
+plugins/imagetmp/
+plugins/querytmp/
+plugins/pixiv/
+*.pyc
