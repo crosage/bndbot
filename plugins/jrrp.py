@@ -25,6 +25,7 @@ def getit(user_id):
     i=datetime.datetime.now()
     random.seed(user_id*i.day*i.month)
     x=random.random()
+    # return f"你今天的人品是100(新年快乐)"
     if x<0.3 :
         y=random.randint(1,40)
         if y<15:

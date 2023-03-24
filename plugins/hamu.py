@@ -20,4 +20,4 @@ async def hamu_handle(bot:Bot,event:Event):
     await hamu.send("哈姆，哈姆")
     await hamu.send("古莫德那德米列洛玛，古莫德那德米列洛玛，阿珂么德哈马迪，阿珂么德哈马迪")
     logger.debug("file:///"+filename)
-    await hamu.send(MessageSegment.image("file:///"+filename))
+    await hamu.finish(MessageSegment.image("file:///"+filename))

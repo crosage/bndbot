@@ -19,9 +19,9 @@ async def otto_handle(bot:Bot,event:Event,args:Message=CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
     if isInGroup(group,"huoziyinshua")==0:
         await otto.finish(None)
-    # text.replace("\n","")
-    # text.replace("\r","")
-    # text.replace(" ","")
+    text=text.replace("\n","")
+    text=text.replace("\r","")
+    text=text.replace(" ","")
     global cnt
     os.chdir("D:\\bot\\HuoZiYinShuasrc\\HuoZiYinShua\\")
     logger.info(text)

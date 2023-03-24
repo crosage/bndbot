@@ -48,7 +48,6 @@ def find_emoji(emoji_code:str):
     return None
 
 async def gif_emoji(emoji_code1:str):
-#emoji是
     emoji1=find_emoji(emoji_code1)
     if not emoji1:
         return f"不支持该emoji{emoji_code1}"#本地data没有其中的一个emoji
