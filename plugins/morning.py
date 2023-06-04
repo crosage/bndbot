@@ -17,7 +17,6 @@ morning=on_fullmatch(msg=["早上好","早","早安","早哦","早捏","おは�
 @morning.handle()
 async def morning_handle(bot:Bot,event:Event):
     _,group,qq=str(event.get_session_id()).split("_")
-#    print(str(event.get_session_id()).split("_"))
     if isInGroup(group,"morning")==0:
         await morning.finish(None)
     msg=getmsg(qq,group)

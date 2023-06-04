@@ -4,7 +4,6 @@ import nonebot
 from PIL import Image
 from nonebot import on_command
 from nonebot.matcher import Matcher
-from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.message import MessageSegment
 from .managementModule.isInGroup import isInGroup
@@ -27,8 +26,6 @@ def deal_unable(path,filename):#图库地址和文件名
 pixiv_18_from_lib=on_command("18")
 @pixiv_18_from_lib.handle()
 async def work(event:Event,matcher:Matcher):
-    # runtimeerror
-    bot,=get_bots().values()
     image_id=random.randint(0,sz-1)
     _,group,qq=str(event.get_session_id()).split("_")
     if isInGroup(group,"18")==0:

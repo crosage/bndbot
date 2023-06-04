@@ -1,6 +1,7 @@
 import aiohttp
 from nonebot.log import logger
-from .Configs import my_cookie
+import nonebot
+my_cookie=nonebot.get_driver().config.my_cookie
 class HttpFecher(object):
     default_timeout_time:int=10
     _default_headers: dict[str, str] = {

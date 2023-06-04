@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from .pixivfetcher import HttpFecher
+from .pixiv_fetcher import HttpFecher
 from typing import TypeVar
 from nonebot.log import logger
 class PreviewImageThumbs():

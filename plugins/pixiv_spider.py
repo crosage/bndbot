@@ -1,8 +1,11 @@
 
+# TODO
+# 将要重构：1.使用beautifulsoup代替直接的正则
+#         2.修改写法，重构重复的函数
 from math import ceil
 from PIL import ImageFont,Image,ImageDraw
 from nonebot.adapters.onebot.v11 import MessageSegment
-from .pixivfetcher import HttpFecher
+from .pixiv_fetcher import HttpFecher
 from datetime import datetime
 from nonebot.log import logger
 from io import BytesIO
@@ -10,22 +13,20 @@ import aiohttp
 import re
 from .model import PreviewImageModel, PreviewImageThumbs
 from .model import PixivArtworkPreviewModel
-from .Configs import pixiv_preview_path
-from .Configs import pixiv_path,default_font_path
+from .configs import pixiv_preview_path
+from .configs import pixiv_path,default_font_path
 import datetime
-import random 
 from pymysql import *
 from nonebot.plugin import on_keyword
-from nonebot.params import Depends
+import nonebot
 from nonebot.plugin import on_command
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
 from .managementModule.isInGroup import isInGroup
-from .Configs import my_cookie
 from nonebot.typing import T_State
 from nonebot.params import CommandArg,ArgStr
 
-
+my_cookie=nonebot.get_driver().config.my_cookie
 class Pixiv(object):
     _default_headers=HttpFecher._default_headers
     _api_fetcher=HttpFecher(timeout=10, headers=_default_headers, cookies={"cookies":my_cookie})
@@ -200,7 +201,6 @@ class PixivRanking(Pixiv):
         # logger.info("结束")
     @classmethod
     async def get_by_id(cls,id,allow_18=1):
-        logger.warning("开始开始")
         _headers=HttpFecher.get_default_headers()
         _headers.update({"referer":"https://www.pixiv.net"})
         imgurl=f"https://www.pixiv.net/artworks/{id}"

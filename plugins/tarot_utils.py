@@ -2,10 +2,6 @@
 塔罗牌部分修改自omega_miya
 
 """
-from io import BytesIO
-from re import fullmatch
-from typing import Literal
-from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Event
@@ -18,7 +14,7 @@ from .managementModule.isInGroup import isInGroup
 from .tarot_data import TarotCards
 from nonebot.plugin.on import on_fullmatch
 from .tarot_typing import TarotCard
-from .Configs import default_font_path
+from .configs import default_font_path
 import random
 import os
 from nonebot.log import logger
