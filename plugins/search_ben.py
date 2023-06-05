@@ -1,3 +1,5 @@
+# 注意：该功能不能开启代理，开启代理会100%被拦
+
 from nonebot import on_command
 from nonebot.adapters.onebot.v11.message import Message,MessageSegment
 from nonebot.params import CommandArg
@@ -16,10 +18,6 @@ DEFAULT_HEADERS = {
     "referer":"https://soutubot.moe/",
     "x-requested-with":"XMLHttpRequest"
 }
-proxy={
-    "http":"http://127.0.0.1:7890",
-    "https":"http://127.0.0.1:7890"
-}
 downloadPath="D:\\bot\\awesomebot\\awesomebot\\plugins\\imagetmp\\"
 
 search_hentai=on_command("搜本")
@@ -30,7 +28,7 @@ async def search_hentai_handler(bot:Bot,event:Event, args:Message=CommandArg()):
     for arg in args:
         if arg.type!="image":
             await search_hentai.finish("你没有发送图片")
-        resp=requests.get(arg.data["url"],proxies=proxy)
+        resp=requests.get(arg.data["url"])
         h=hash(resp.content)
         print(resp)
 
@@ -42,7 +40,7 @@ async def search_hentai_handler(bot:Bot,event:Event, args:Message=CommandArg()):
             fr=open(downloadPath+str(h)+".png","rb")
             DEFAULT_HEADERS.update({"x-api-key":encoded_data})
             data={"factor":1.2}
-            resp=requests.post(search_bot,headers=DEFAULT_HEADERS,files={"file":fr},data=data,proxies=proxy)
+            resp=requests.post(search_bot,headers=DEFAULT_HEADERS,files={"file":fr},data=data)
             print(resp.status_code)
             _json=resp.json()
             msgs=[]
@@ -51,9 +49,8 @@ async def search_hentai_handler(bot:Bot,event:Event, args:Message=CommandArg()):
                 title=_json["data"][0]["title"]
                 page=_json["data"][0]["pagePath"]
                 msg=(
-                    MessageSegment.at(user_id=qq),
-                    MessageSegment.image(url),
-                    MessageSegment.text("标题:"+title),
+                    MessageSegment.image(url)+
+                    MessageSegment.text("标题:"+title)+
                     MessageSegment.text("https://nhentai.net/"+page)
                 )
                 logger.error(type(msg))

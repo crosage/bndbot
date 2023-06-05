@@ -1,5 +1,3 @@
-# 注意：该功能不能开启代理，开启代理会100%被拦
-
 from nonebot import on_command
 from nonebot.adapters.onebot.v11.message import Message,MessageSegment
 from nonebot.params import CommandArg
@@ -56,10 +54,17 @@ async def search_image_handler(bot:Bot,event:Event, args:Message=CommandArg()):
         resp=requests.post(
             url=ascii2d_url,
             data=data,
-            headers=DEFAULT_HEADERS
-        )
+            proxies={
+                "http":"http://127.0.0.1:7890",
+                "https":"http://127.0.0.1:7890"
+            },
+        headers=DEFAULT_HEADERS)
         bovw=requests.get(
             resp.url.replace("color","bovw"),
+            proxies={
+                "http":"http://127.0.0.1:7890",
+                "https":"http://127.0.0.1:7890"
+            },
             headers=DEFAULT_HEADERS
         )
         print(bovw.url)
