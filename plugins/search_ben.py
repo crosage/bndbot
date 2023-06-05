@@ -45,24 +45,27 @@ async def search_hentai_handler(bot:Bot,event:Event, args:Message=CommandArg()):
             _json=resp.json()
             msgs=[]
             try :
-                url=_json["data"][0]["previewImageUrl"]
-                title=_json["data"][0]["title"]
-                page=_json["data"][0]["pagePath"]
-                msg=(
-                    MessageSegment.image(url)+
-                    MessageSegment.text("标题:"+title)+
-                    MessageSegment.text("https://nhentai.net/"+page)
-                )
-                logger.error(type(msg))
-                tmp = {
-                    "type": "node",
-                    "data": {
-                        "name": "测试",
-                        "uin": 3408476436,
-                        "content": msg
+                for i in range (100):
+                    url=_json["data"][i]["previewImageUrl"]
+                    title=_json["data"][i]["title"]
+                    page=_json["data"][i]["pagePath"]
+                    msg=(
+                        MessageSegment.image(url)+
+                        MessageSegment.text("标题:"+title+"\n")+
+                        MessageSegment.text("连接:" )+
+                        MessageSegment.text("https://nhentai.net/"+page)
+                    )
+                    logger.warning(title)
+                    logger.error(type(msg))
+                    tmp = {
+                        "type": "node",
+                        "data": {
+                            "name": "测试",
+                            "uin": 3408476436,
+                            "content": msg
+                        }
                     }
-                }
-                msgs.append(tmp)
+                    msgs.append(tmp)
             finally :
                await bot.send_group_forward_msg(group_id=group,messages=msgs)
             
