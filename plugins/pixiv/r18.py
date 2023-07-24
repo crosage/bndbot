@@ -6,7 +6,7 @@ from nonebot import on_command
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.message import MessageSegment
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 from nonebot.log import logger
 
 lib_path=nonebot.get_driver().config.r18_lib_path

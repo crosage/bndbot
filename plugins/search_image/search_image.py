@@ -40,15 +40,12 @@ def dealer(data):
             
 search_image=on_command("搜图")
 @search_image.handle()
-async def search_image_handler(bot:Bot,event:Event, args:Message=CommandArg()):
-    return 
+async def search_image_handler(bot:Bot,event:Event, args:Message=CommandArg()): 
     _,group,qq=str(event.get_session_id()).split("_")
     ascii2d_url="https://ascii2d.net/search/uri"
     data={
     }
     for arg in args:
-        logger.debug(args)
-        logger.debug("*****************")
         if arg.type!="image":
             await search_image.finish("你没有发送图片")
         data.update({"uri":arg.data["url"]})

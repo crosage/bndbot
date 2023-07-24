@@ -3,7 +3,7 @@ import random
 from nonebot.plugin import on_keyword
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 from nonebot.plugin.on import on_fullmatch
 from nonebot.adapters.onebot.v11.message import Message,MessageSegment
 from nonebot.log import logger

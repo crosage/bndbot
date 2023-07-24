@@ -9,8 +9,9 @@ from nonebot.matcher import Matcher #matcher 匹配器
 from nonebot.params import Arg,CommandArg,ArgPlainText #param 参数，对参数的操作
 from PIL import Image
 from nonebot.params import ArgStr
-from ..managementModule.uitls import messageTools
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.uitls import messageTools
+from ..configs import petpet_file_path,pixiv_preview_path
+from ..management_module.is_in_group import isInGroup
 from urllib.request import urlretrieve
 import os
 

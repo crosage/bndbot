@@ -6,7 +6,7 @@ from nonebot.matcher import Matcher
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.message import MessageSegment
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 from nonebot.log import logger
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11.message import Message
@@ -28,4 +28,4 @@ async def otto_handle(bot:Bot,event:Event,args:Message=CommandArg()):
     logger.debug(path)
     os.system(f"python HZYS.py -t {text} -y -o ./{cnt}.wav")
     # logger.debug(datetime.datetime.microsecond())
-    # await otto.send(MessageSegment.record(f"file:///D:/bot/HuoZiYinShuasrc/HuoZiYinShua/{cnt}.wav"))
+    await otto.send(MessageSegment.record(f"file:///D:/bot/HuoZiYinShuasrc/HuoZiYinShua/{cnt}.wav"))

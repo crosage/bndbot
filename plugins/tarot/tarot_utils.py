@@ -10,12 +10,13 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent
 from nonebot import on_command
 from nonebot.plugin.on import on_fullmatch
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 from .tarot_data import TarotCards
 from nonebot.plugin.on import on_fullmatch
 from .tarot_typing import TarotCard
-from ..configs import default_font_path
+from ..configs import default_font_path,default_tmpfile_path
 import random
+from ..configs import tarot_card_file_path
 import os
 from nonebot.log import logger
 tarot=on_fullmatch(msg=["tarot","塔罗牌"])
@@ -95,7 +96,7 @@ def generate_tarot_card(
     # 获取这张卡牌
     tarot_card=get_card_by_id(id=id_)
     print(os.getcwd())
-    tarot_card_file = os.getcwd()+"\\awesomebot\\plugins\\localResource\\tarot\\bilibili\\"+f"{id_}.png"
+    tarot_card_file = tarot_card_file_path+"\\bilibili\\"+f"{id_}.png"
 
     """绘制卡片图片"""
     # 获取卡片图片
@@ -197,6 +198,5 @@ def generate_tarot_card(
                                                     text=reversed_text, font=text_font, align='center', anchor='ma',
                                                     fill=(0, 0, 0))  # 逆位描述
 
-    background_path=os.getcwd()+"\\awesomebot\\plugins\\imagetmp\\tarottmp.jpg"
-    background.save(background_path)
-    return background_path
+    background.save(default_tmpfile_path+"tarottmp.png")
+    return default_tmpfile_path+"tarottmp.png"

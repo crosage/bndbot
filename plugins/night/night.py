@@ -11,7 +11,7 @@ from nonebot.plugin import on_command
 from nonebot.plugin.on import on_fullmatch
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 
 morning=on_fullmatch(msg=["晚安","呼呼","晚安捏","晚安大家","おやすみ"])
 @morning.handle()

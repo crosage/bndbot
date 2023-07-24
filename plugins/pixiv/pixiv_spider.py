@@ -22,7 +22,7 @@ import nonebot
 from nonebot.plugin import on_command
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 from nonebot.typing import T_State
 from nonebot.params import CommandArg,ArgStr
 

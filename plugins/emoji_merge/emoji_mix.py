@@ -3,14 +3,13 @@ from tkinter import E
 from typing import List
 import emoji
 import aiohttp
-import httpx
 import traceback
 from nonebot import on_regex,get_driver
 from nonebot.log import logger
 from nonebot.params import RegexDict #正则表达式匹配emoji参数
 from nonebot.adapters.onebot.v11 import MessageSegment,Event
 from .emoji_data import emojis,dates
-from ..managementModule.isInGroup import isInGroup
+from ..management_module.is_in_group import isInGroup
 
 emoji_match=filter(lambda e:len(e)==1,emoji.EMOJI_DATA.keys())
 pattern="("+"|".join(re.escape(e) for e in emoji_match)+")"
