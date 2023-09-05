@@ -26,7 +26,7 @@ def deal_unable(path,filename):#图库地址和文件名
 
 
 
-pixiv_from_lib=on_command("来张",aliases={"随机萌图","色图","涩图","不色图","laizhang","唻仧","lz","来点"})
+pixiv_from_lib=on_command("来张",aliases={"色图","涩图","laizhang","setu","lz"})
 @pixiv_from_lib.handle()
 async def work(event:Event,matcher:Matcher):
 

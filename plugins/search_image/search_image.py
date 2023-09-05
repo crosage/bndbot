@@ -45,6 +45,7 @@ async def search_image_handler(bot:Bot,event:Event, args:Message=CommandArg()):
     ascii2d_url="https://ascii2d.net/search/uri"
     data={
     }
+    logger.debug("搜图")
     for arg in args:
         if arg.type!="image":
             await search_image.finish("你没有发送图片")

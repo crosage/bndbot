@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang=zh-cn><head><meta charset=utf-8><meta content="IE=edge" http-equiv=X-UA-Compatible><meta content="viewport-fit=cover" name=viewport><meta content="initial-scale=1,maximum-scale=1,minimum-scale=1" name=viewport><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" name=viewport><title>wiki</title><script src=//cdn.gmedata.com/websdk/web.site.min.js></script><script>var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement('script');
+        hm.src = 'https://hm.baidu.com/hm.js?4e86461ca95817a955a0fd34fef28c67';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(hm, s);
+    })();</script><script>var options = {
+        appkey: 'qNzjOehbKEVI'
+    };
+    window.staticFn = new StaticFn(options).init();
+
+    //是否是APP页面；
+    var isAppPage = false;
+    var goPage = '';
+    var apiBase = '';
+    var appDetail = '';
+    var appToken = '';
+    var token = appToken || GetQueryString('token');
+    var showLogin = GetQueryString('showLogin');
+    var htmlBg = GetQueryString('html_bg');
+    var sdkParams = {
+        data: GetQueryString('data'),
+        sign: GetQueryString('sign'),
+        game_id: GetQueryString('gameid'),
+        timestamp: GetQueryString('timestamp'),
+    };
+    sessionStorage.setItem('sdkParams', JSON.stringify(sdkParams));
+
+    if (showLogin == '0') {
+        sessionStorage.setItem('showLogin', '0');
+    }
+
+    console.log('token------');
+    console.log(token);
+    if (token == '0' || token == 0) {
+        // console.log('token2-----');
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userUid');
+        clearCookie();
+        delCookie('userToken');
+    } else {
+        if (token != null) {
+            localStorage.setItem('userToken', token);
+            document.cookie = 'userToken=' + token + ';domain=.gamekee.com';
+        }
+    }
+
+    if (htmlBg) {
+        document.documentElement.style.background = htmlBg;
+    }
+
+    function GetQueryString (name) {
+        var reg = new RegExp('\\b' + name + '=([^&]*)');
+        var r = location.href.match(reg);
+        if (r != null) return r[1];
+    }
+
+    function clearCookie () {
+        var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+        if (keys) {
+            for (var i = keys.length; i--;) {
+                document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString();
+            }
+        }
+    }
+
+    function delCookie (CookName) {
+        var date = new Date();
+        date.setTime(date.getTime() - 10000);
+        var val = getCookie(CookName);
+        if (val != null) {
+            document.cookie = cookName + '=;expires=' + date.toGMTString();
+        }
+    }
+
+    function getCookie (cookName) {
+        var cookieStr = document.cookie.split(';');
+        for (var i = 0; i < cookieStr.length; i++) {
+            var val = cookieStr[i].split('=');
+            if (escape(cookName) == val[0]) {
+                return unescape(val[1]);
+            }
+        }
+        return null;
+    }</script><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-00031b76.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-0200d434.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-0830f31e.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-0a35eb4b.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-0d95ae45.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-0fa30112.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-131ca9f9.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-1c010ac3.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-1f53bdf1.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-25c5c05c.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-29930654.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-2d0e4aad.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-2d0e9702.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-2d229afb.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-2dd316e3.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-317a1dc6.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-32133584.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-33e49e4c.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-365c29b2.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-36a9c82b.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-37f74462.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-38e144c6.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-39333a57.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-3c35244e.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-3e6da945.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-41f3d986.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-4299ea44.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-4463fdfe.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-4621725a.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-49724242.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-4d014271.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-5041e809.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-619d7aac.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-620411ce.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-621ff38c.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-64fc4176.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-6507dcc6.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-6595d013.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-679c251d.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-7dbd5fc0.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-8732e620.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-89085392.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-9393fb28.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-9b07c0ba.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-a16ca0b8.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-a2cef810.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-a70f2d6e.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-b156b6b8.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-b4dc31f6.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-b88af37a.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-ce288552.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-dbb7a5ba.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-dfb873ae.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-e11e6726.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-ee63d39a.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-f3fcdc9a.26f04ae30ce75721b904.js rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-0200d434.5ba6a1bc.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-0830f31e.c9201304.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-0a35eb4b.633ebde1.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-0d95ae45.aec1c5b7.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-0fa30112.9e39889d.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-131ca9f9.ff39606c.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-1c010ac3.de684316.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-1f53bdf1.5dffefdf.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-25c5c05c.7c2ff77b.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-29930654.0470e078.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-2dd316e3.7de86b6e.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-317a1dc6.afbb4795.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-32133584.8b135ed7.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-33e49e4c.41c27455.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-365c29b2.2f54457b.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-36a9c82b.4d570b01.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-37f74462.00552201.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-38e144c6.fd616539.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-39333a57.6141de80.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-3c35244e.9b9b12a6.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-3e6da945.77c9f5ca.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-41f3d986.039627b1.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-4299ea44.be9b9e05.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-4621725a.102bcb6f.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-4d014271.5dffefdf.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-5041e809.b24d10f0.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-620411ce.c0e94b37.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-64fc4176.9b8da629.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-6507dcc6.f21080ae.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-6595d013.22ef69a6.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-679c251d.4a94c6ff.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-7dbd5fc0.9f69cf3c.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-8732e620.e469de8c.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-89085392.434a0a54.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-9393fb28.a178c504.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-a16ca0b8.7214f9be.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-a2cef810.47012065.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-a70f2d6e.aec1c5b7.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-b156b6b8.f1d5f20c.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-b4dc31f6.6eaaf435.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-b88af37a.ba2c5e49.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-ce288552.ea27af75.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-dbb7a5ba.4694d8eb.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-dfb873ae.1d2112c9.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-e11e6726.4f0746e0.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-ee63d39a.74b408f0.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-f3fcdc9a.a8f2d1d5.css rel=prefetch><link href=//cdnstatic.gamekee.com/wiki/2.0/production/app.26f04ae30ce75721b904.js rel=preload as=script><link href=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-vendors.26f04ae30ce75721b904.js rel=preload as=script><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/app.f7aa94dc.css rel=preload as=style><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-vendors.9f355f7c.css rel=preload as=style><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/chunk-vendors.9f355f7c.css rel=stylesheet><link href=//cdnstatic.gamekee.com/wiki/2.0/production/static/css/app.f7aa94dc.css rel=stylesheet></head><body><noscript><strong>We're sorry but 2.0 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script src=//cdnstatic.gamekee.com/wiki/2.0/production/assets/js/chunk-vendors.26f04ae30ce75721b904.js></script><script src=//cdnstatic.gamekee.com/wiki/2.0/production/app.26f04ae30ce75721b904.js></script></body></html>

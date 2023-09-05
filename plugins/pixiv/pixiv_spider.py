@@ -1,13 +1,10 @@
-
-# TODO
-# 将要重构：1.使用beautifulsoup代替直接的正则
-#         2.修改写法，重构重复的函数
 from math import ceil
 from PIL import ImageFont,Image,ImageDraw
 from nonebot.adapters.onebot.v11 import MessageSegment
 from .pixiv_fetcher import HttpFecher
 from datetime import datetime
 from nonebot.log import logger
+import random
 from io import BytesIO
 import aiohttp
 import re
@@ -17,7 +14,6 @@ from ..configs import pixiv_preview_path
 from ..configs import pixiv_path,default_font_path
 import datetime
 from pymysql import *
-from nonebot.plugin import on_keyword
 import nonebot
 from nonebot.plugin import on_command
 from nonebot.adapters.onebot.v11 import Bot,Event
@@ -26,6 +22,7 @@ from ..management_module.is_in_group import isInGroup
 from nonebot.typing import T_State
 from nonebot.params import CommandArg,ArgStr
 
+threshold=100
 my_cookie=nonebot.get_driver().config.my_cookie
 class Pixiv(object):
     _default_headers=HttpFecher._default_headers
@@ -162,6 +159,23 @@ async def generate_thumbs_preview_image(
         f.write(image_content)
     return pixiv_preview_path+"\\"+image_file_name
 
+async def fetch_image(session,imgurl,new_header,proxys,illust_id,rank,user_name):
+    try:
+        logger.info(f"async url={imgurl}")
+        async with session.get(url=imgurl,headers=new_header,cookies={"cookies":my_cookie},proxy=proxys) as resp:
+            if resp.status==200:
+                img=await resp.read()
+                return {"img":img,"illust_id":illust_id,"rank":rank,"user_name":user_name}
+            else :
+                imgurl=imgurl.replace("jpg","png")
+                async with session.get(url=imgurl,headers=new_header,cookies={"cookies":my_cookie},proxy=proxys) as resp2:
+                    if resp2.status==200:
+                        img=await resp.read()
+                        return await {"img":img,"illust_id":illust_id,"rank":rank,"user_name":user_name}
+    except Exception as e:
+        logger.error(f"{e}")
+
+import asyncio
 class PixivRanking(Pixiv):
     ranking_url:str="https://www.pixiv.net/ranking.php"
     @classmethod
@@ -176,31 +190,22 @@ class PixivRanking(Pixiv):
         preview.preview_name=f"Pixiv Daily Ranking {datetime.datetime.now().strftime('%Y-%m-%d')}"
         async with aiohttp.ClientSession() as session:
             cnt=0
+            task=[]
             for content in ranking_data["contents"]:
                 cnt=cnt+1
-                imgurls=content["url"]
-                # imgurls=imgurls.replace("c/240x480/img-master","img-original")
-                # imgurls=imgurls.replace("0_master1200.jpg","")
-                illust_page_count=int(content["illust_page_count"])
+                imgurl=content["url"]
                 new_headers=HttpFecher.get_default_headers()
                 new_headers.update({"Referer":"https://www.pixiv.net/artworks/"+str(content["illust_id"])})
-                for i in range(0,1):
-                    imgurl=imgurls
-                    logger.info(f"url={imgurl}")
-                    async with session.get(url=imgurl,headers=new_headers,cookies={"cookies":my_cookie},proxy="http://localhost:7890") as resp:
-                        if resp.status==200:
-                            _bytes=await resp.read()
-                            preview.previews.append(PreviewImageThumbs(f"Pid:{content['illust_id']}\n[No.{content['rank']}]\nAuther:{content['user_name']}",_bytes))
-                        else :
-                            imgurl=imgurl.replace("jpg","png")
-                            async with session.get(url=imgurl,headers=new_headers,cookies={"cookies":my_cookie},proxy="http://localhost:7890") as resp2:
-                                _bytes=await resp2.read()
-                                preview.previews.append(PreviewImageThumbs(f"Pid:{content['illust_id']}\n[No.{content['rank']}]\nAuther:{content['user_name']}",_bytes))
+                task.append(fetch_image(session,imgurl,new_headers,"http://localhost:7890",illust_id=content['illust_id'],rank=content["rank"],user_name=content["user_name"]))
+            results=await asyncio.gather(*task)
+            for imgs in results:
+                logger.error(f"Pid:{imgs['illust_id']}\n[No.{imgs['rank']}]\nAuther:{imgs['user_name']}")
+                preview.previews.append(PreviewImageThumbs(f"Pid:{imgs['illust_id']}\n[No.{imgs['rank']}]\nAuther:{imgs['user_name']}",imgs["img"]))
         returnpath=await generate_thumbs_preview_image(preview=preview)
         return returnpath      
         # logger.info("结束")
     @classmethod
-    async def get_by_id(cls,id,allow_18=1):
+    async def get_by_id(cls,id,allow_18=1,need_threshold=0):
         _headers=HttpFecher.get_default_headers()
         _headers.update({"referer":"https://www.pixiv.net"})
         imgurl=f"https://www.pixiv.net/artworks/{id}"
@@ -212,6 +217,16 @@ class PixivRanking(Pixiv):
                 return "error"
             pattern=re.compile(r'\"https://i.pximg.net/img-original/img.*?\"')
             patterns=re.compile(r'R-18')
+            patternss = r'"bookmarkCount":(\d+)'
+            match = re.search(patternss, result)
+
+            if match:
+                bookmark_count = int(match.group(1))
+                print(f"提取出的书签计数是: {bookmark_count}")
+                if need_threshold and bookmark_count<=threshold:
+                    return 0,0
+            else:
+                print("未找到书签计数")
             newurl=pattern.search(result).group()
             newurl=newurl.replace("\\","")
             newurl=newurl.replace("\"","")
@@ -227,7 +242,7 @@ class PixivRanking(Pixiv):
                 imgtype=str(newurl.split(".")[-1])
                 with open(new_path+f"_p{0}."+imgtype,"wb") as f:
                     f.write(result2)
-                return new_path+f"_p{0}."+imgtype
+                return new_path+f"_p{0}."+imgtype,bookmark_count
 
 #loop=asyncio.get_event_loop()
 #res=loop.run_until_complete((PixivRanking.query_ranking(mode="daily")))
@@ -245,120 +260,58 @@ def deal_unable(path,filename):#图库地址和文件名
 
 
 
-pixiv=on_command("pixiv日榜",priority=20,block=True)
+pixiv=on_command("pixiv",priority=20,block=True)
 @pixiv.handle()
 async def pixiv_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"pixiv")==0:
-        return 
-    page=cmd_arg.extract_plain_text().strip()
-    if page:
-        logger.info(f"接收到{page}")
-        state.update({"page":page})
-    else :
-        state.update({"page":1})
-@pixiv.got("page")
-async def pixivwork(bot:Bot,pid:str=ArgStr("page")):
-    logger.info("haha")
-    pid=pid.strip()
-    await pixiv.send("别急")
-    try :
-        logger.error("why                 why")
-        path=await PixivRanking.query_ranking(page=pid)    
-        path.replace("\\","/")
-        await pixiv.send(MessageSegment.image("file:///"+path))
-    except :
-        await pixiv.send("网络异常（没开梯子或ip被封禁）")
+    # if isInGroup(group,"pixiv")==0:
+    #     return 
+    args=cmd_arg.extract_plain_text().strip()
+    pattern=r"(r18)?([月周日]?)(\d*)"
+    match=re.match(pattern,args)
+    if match:
+        r18_flag=match.group(1)
+        ranking_type=match.group(2)
+        page=match.group(3)
+        if not page:
+            page=1
+        logger.error(f"r{r18_flag} type:{ranking_type} {page}")
+        try :
+            # logger.info(f"r{r18_flag} {ranking_type} {page}")
+            if r18_flag=="r18":
+                if ranking_type=="日":
+                    path=await PixivRanking.query_ranking(mode="daily_r18",page=page) 
+                elif ranking_type=="周":
+                    path=await PixivRanking.query_ranking(mode="weekly_r18",page=page) 
+                elif ranking_type=="月":
+                    path=await PixivRanking.query_ranking(mode="monthly_r18",page=page) 
 
-pixiv_week=on_command("pixiv周榜",priority=20,block=True)
-@pixiv_week.handle()
-async def pixiv_month_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
-    _,group,qq=str(event.get_session_id()).split("_")
-    logger.error("errorrrrrrrrrrr")
-    if isInGroup(group,"pixiv")==0:
-        return 
-    page=cmd_arg.extract_plain_text().strip()
-    logger.info(f"{page}******")
-    if page:
-        logger.info(f"接收到{page}")
-        state.update({"page":page})
-    else :
-        state.update({"page":1})
-@pixiv_week.got("page")
-async def pixiv_week_work(bot:Bot,pid:str=ArgStr("page")):
-    logger.info("haha")
-    pid=pid.strip()
-    await pixiv_week.send("别急")
-    path=await PixivRanking.query_ranking(page=pid,mode="weekly")    
-    path.replace("\\","/")
-    await pixiv_week.send(MessageSegment.image("file:///"+path))
-
-pixiv_month=on_command("pixiv月榜",priority=20,block=True)
-@pixiv_month.handle()
-async def pixiv_month_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
-    _,group,qq=str(event.get_session_id()).split("_")
-    logger.error("errorrrrrrrrrrr")
-    if isInGroup(group,"pixiv")==0:
-        return 
-    page=cmd_arg.extract_plain_text().strip()
-    logger.info(f"{page}******")
-    if page:
-        logger.info(f"接收到{page}")
-        state.update({"page":page})
-    else :
-        state.update({"page":1})
-@pixiv_month.got("page")
-async def pixiv_month_work(bot:Bot,pid:str=ArgStr("page")):
-    logger.info("haha")
-    pid=pid.strip()
-    await pixiv_month.send("别急")
-    path=await PixivRanking.query_ranking(page=pid,mode="monthly")    
-    path.replace("\\","/")
-    await pixiv_month.send(MessageSegment.image("file:///"+path))
-
-pixiv_18_daily=on_command("pixiv18日榜",priority=20,block=True)
-@pixiv_18_daily.handle()
-async def pixiv_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
-    _,group,qq=str(event.get_session_id()).split("_")
-    logger.info("被18+接收到")
-    if isInGroup(group,"pixiv")==0:
-        return 
-    page=cmd_arg.extract_plain_text().strip()
-    if page:
-        logger.info(f"接收到{page}")
-        state.update({"page":page})
-    else :
-        state.update({"page":1})
-@pixiv_18_daily.got("page")
-async def pixiv18work(bot:Bot,page:str=ArgStr("page")):
-    logger.info("haha??")
-    page=page.strip()
-    await pixiv_18_daily.send("别急")
-    try :
-        path=await PixivRanking.query_ranking(mode="daily_r18",page=page)    
-        path.replace("\\","/")
-        await pixiv_18_daily.send(MessageSegment.image("file:///"+path))
-    except :
-        return "没开梯子"
-    
+            else :
+                if ranking_type=="日":
+                    path=await PixivRanking.query_ranking(mode="daily",page=page) 
+                elif ranking_type=="周":
+                    path=await PixivRanking.query_ranking(mode="weekly",page=page) 
+                elif ranking_type=="月":
+                    path=await PixivRanking.query_ranking(mode="monthly",page=page) 
+            await pixiv.send(MessageSegment.image("file:///"+path))
+        except:
+            await pixiv.send("网络异常（没开梯子或ip被封禁）") 
 
 
-listit=["645886990","868313003","850921821","853471833"]
-pixiv_id=on_command("pixiv",priority=30,block=True)
+# 进行根据pid搜图，或根据tag搜图
+pixiv_id=on_command("pixiv搜图",priority=30,block=True)
 @pixiv_id.handle()
 async def pixiv_id_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
     logger.info("被pixiv接收到")
-    if isInGroup(group,"pixiv")==0:
-        return 
+    # if isInGroup(group,"pixiv")==0:
+        # return 
     pid=cmd_arg.extract_plain_text().strip()
-    flag=0
-    logger.debug(f"{type(group)}")
-    if group in listit :
-        flag=1
-    if pid:
-        path:str=await PixivRanking.get_by_id(pid,flag)
+    flag=1
+    if pid.isdigit(): 
+        path=await PixivRanking.get_by_id(pid,flag)
         logger.info(path)
+        path=path[0]
         if path=="R-18":
             await pixiv.finish(f"这个群没有开启18+")
         if path=="error":
@@ -370,3 +323,34 @@ async def pixiv_id_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = C
                 deal_unable(path[0:path.rfind("\\")+1],path[path.rfind("\\")+1:])
                 await pixiv.send(f"这个图被吞了，对不起喵{pid}")
                 await pixiv.send(MessageSegment.image("file:///"+path[0:path.rfind("\\")+1]+"tmp.png"))
+    else :
+        tag=pid
+        pixiv_url = 'https://www.pixivs.cn/ajax/search/artworks/' + tag + '?p=1'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=pixiv_url,headers=HttpFecher._default_headers,cookies={"cookies":my_cookie},proxy="http://localhost:7890") as resp:
+                result=await resp.json()
+                illusts = result['illustManga']['data']
+                path=["",0]
+                tot=0
+                while path[1]<=100:
+                    tot=tot+1
+                    if tot>10:
+                        break 
+                    illust = illusts[random.randint(0, illusts.__len__() - 1)]
+                    img_pid = illust['id']
+                    path=await PixivRanking.get_by_id(img_pid,flag)
+
+                likes=path[1]
+                path=path[0]  
+                if path=="R-18":
+                    await pixiv.finish(f"这个群没有开启18+")
+                if path=="error":
+                    await pixiv.send(f"没有这个图QAQ {img_pid}")
+                else :
+                    try:
+                        await pixiv.send(f"like数量:{likes} pid:{img_pid}")
+                        await pixiv.send(MessageSegment.image("file:///"+path))
+                    except:
+                        deal_unable(path[0:path.rfind("\\")+1],path[path.rfind("\\")+1:])
+                        await pixiv.send(f"这个图被吞了，对不起喵{img_pid}")
+                        await pixiv.send(MessageSegment.image("file:///"+path[0:path.rfind("\\")+1]+"tmp.png"))
