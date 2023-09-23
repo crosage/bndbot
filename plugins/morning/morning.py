@@ -10,14 +10,14 @@ from nonebot.plugin import on_command
 from nonebot.plugin.on import on_fullmatch
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 greetings=["早安","早上好","早哦"]
 
 morning=on_fullmatch(msg=["早上好","早","早安","早哦","早捏","おはよ"])
 @morning.handle()
 async def morning_handle(bot:Bot,event:Event):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"morning")==0:
+    if is_function_enabled(group, "morning")==0:
         await morning.finish(None)
     msg=getmsg(qq,group)
     await morning.send(msg)

@@ -8,7 +8,7 @@ from nonebot.matcher import Matcher
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.message import MessageSegment
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 
 capoo_path=nonebot.get_driver().config.capoo_path
 mylib=os.listdir(capoo_path)
@@ -20,7 +20,7 @@ async def work(event:Event,matcher:Matcher):
     bot,=get_bots().values()
     image_id=random.randint(0,sz-1)
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"capoo")==0:
+    if is_function_enabled(group, "capoo")==0:
         await capoo.finish(None)
     logger.info(f"file:///"+capoo_path+f"\{mylib[image_id]}")
     await capoo.send(MessageSegment.image("file:///"+capoo_path+f"\{mylib[image_id]}"))

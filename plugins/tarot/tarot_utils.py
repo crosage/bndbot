@@ -10,7 +10,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent
 from nonebot import on_command
 from nonebot.plugin.on import on_fullmatch
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 from .tarot_data import TarotCards
 from nonebot.plugin.on import on_fullmatch
 from .tarot_typing import TarotCard
@@ -23,7 +23,7 @@ tarot=on_fullmatch(msg=["tarot","塔罗牌"])
 @tarot.handle()
 async def tarot_handle(event:Event,matcher:Matcher):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"tarot")==0:
+    if is_function_enabled(group, "tarot")==0:
         await tarot.finish(None)
     card = random.randint(0,21)
     # 随机正逆

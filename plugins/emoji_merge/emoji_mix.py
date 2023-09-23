@@ -9,7 +9,7 @@ from nonebot.log import logger
 from nonebot.params import RegexDict #正则表达式匹配emoji参数
 from nonebot.adapters.onebot.v11 import MessageSegment,Event
 from .emoji_data import emojis,dates
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 
 emoji_match=filter(lambda e:len(e)==1,emoji.EMOJI_DATA.keys())
 pattern="("+"|".join(re.escape(e) for e in emoji_match)+")"
@@ -23,7 +23,7 @@ emojimix=on_regex(
 @emojimix.handle()
 async def mix(event:Event,msg:dict=RegexDict()):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"emoji_mix")==0:
+    if isGroupFunctionEnabled(group, "emoji_mix")==0:
         await emojimix.finish(None)
     emoji_code1=msg["code1"]
     emoji_code2=msg["code2"]

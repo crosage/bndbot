@@ -10,7 +10,7 @@ from nonebot.adapters.onebot.v11 import Event
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.adapters.onebot.v11.message import MessageSegment
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 
 
 blue_vits=on_command("vits",aliases={"爱丽丝"})

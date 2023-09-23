@@ -6,7 +6,7 @@ from nonebot import on_command
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.message import MessageSegment
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 from nonebot.log import logger
 
 lib_path=nonebot.get_driver().config.r18_lib_path
@@ -28,7 +28,7 @@ pixiv_18_from_lib=on_command("18")
 async def work(event:Event,matcher:Matcher):
     image_id=random.randint(0,sz-1)
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"18")==0:
+    if is_function_enabled(group, "18")==0:
         await pixiv_18_from_lib.finish(None)
     try :
         await pixiv_18_from_lib.send(mylib[image_id])

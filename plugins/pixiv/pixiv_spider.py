@@ -7,6 +7,7 @@ from nonebot.log import logger
 import random
 from io import BytesIO
 import aiohttp
+import requests
 import re
 from .model import PreviewImageModel, PreviewImageThumbs
 from .model import PixivArtworkPreviewModel
@@ -18,7 +19,7 @@ import nonebot
 from nonebot.plugin import on_command
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 from nonebot.typing import T_State
 from nonebot.params import CommandArg,ArgStr
 
@@ -181,11 +182,13 @@ class PixivRanking(Pixiv):
     @classmethod
     async def query_ranking(cls,mode="daily",content="illust",page:int =1):
         params={"format":"json","mode":mode,"p":page,"content":content}
+        logger.warning("开始")
         ranking_data=await cls._api_fetcher.get_json_dict(url=cls.ranking_url,params=params)
         if ranking_data["status"]!=200:
             print(f"FATAL status={ranking_data.result}")
+        logger.warning("1234654")
         ranking_data=ranking_data["result"]
-        logger.info("开始")
+        
         preview=PreviewImageModel()
         preview.preview_name=f"Pixiv Daily Ranking {datetime.datetime.now().strftime('%Y-%m-%d')}"
         async with aiohttp.ClientSession() as session:
@@ -217,16 +220,6 @@ class PixivRanking(Pixiv):
                 return "error"
             pattern=re.compile(r'\"https://i.pximg.net/img-original/img.*?\"')
             patterns=re.compile(r'R-18')
-            patternss = r'"bookmarkCount":(\d+)'
-            match = re.search(patternss, result)
-
-            if match:
-                bookmark_count = int(match.group(1))
-                print(f"提取出的书签计数是: {bookmark_count}")
-                if need_threshold and bookmark_count<=threshold:
-                    return 0,0
-            else:
-                print("未找到书签计数")
             newurl=pattern.search(result).group()
             newurl=newurl.replace("\\","")
             newurl=newurl.replace("\"","")
@@ -242,7 +235,7 @@ class PixivRanking(Pixiv):
                 imgtype=str(newurl.split(".")[-1])
                 with open(new_path+f"_p{0}."+imgtype,"wb") as f:
                     f.write(result2)
-                return new_path+f"_p{0}."+imgtype,bookmark_count
+                return new_path+f"_p{0}."+imgtype
 
 #loop=asyncio.get_event_loop()
 #res=loop.run_until_complete((PixivRanking.query_ranking(mode="daily")))
@@ -260,14 +253,14 @@ def deal_unable(path,filename):#图库地址和文件名
 
 
 
-pixiv=on_command("pixiv",priority=20,block=True)
+pixiv=on_command("pixiv",aliases={"p"},priority=20,block=True)
 @pixiv.handle()
 async def pixiv_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
     # if isInGroup(group,"pixiv")==0:
     #     return 
     args=cmd_arg.extract_plain_text().strip()
-    pattern=r"(r18)?([月周日]?)(\d*)"
+    pattern=r"(r)?([月周日]?)(\d*)"
     match=re.match(pattern,args)
     if match:
         r18_flag=match.group(1)
@@ -304,14 +297,13 @@ pixiv_id=on_command("pixiv搜图",priority=30,block=True)
 async def pixiv_id_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
     logger.info("被pixiv接收到")
-    # if isInGroup(group,"pixiv")==0:
-        # return 
     pid=cmd_arg.extract_plain_text().strip()
     flag=1
+    logger.warning(f"{pid}")
     if pid.isdigit(): 
         path=await PixivRanking.get_by_id(pid,flag)
         logger.info(path)
-        path=path[0]
+        logger.warning("********")
         if path=="R-18":
             await pixiv.finish(f"这个群没有开启18+")
         if path=="error":
@@ -325,32 +317,18 @@ async def pixiv_id_handle(bot:Bot,event:Event,state:T_State,cmd_arg: Message = C
                 await pixiv.send(MessageSegment.image("file:///"+path[0:path.rfind("\\")+1]+"tmp.png"))
     else :
         tag=pid
-        pixiv_url = 'https://www.pixivs.cn/ajax/search/artworks/' + tag + '?p=1'
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url=pixiv_url,headers=HttpFecher._default_headers,cookies={"cookies":my_cookie},proxy="http://localhost:7890") as resp:
-                result=await resp.json()
-                illusts = result['illustManga']['data']
-                path=["",0]
-                tot=0
-                while path[1]<=100:
-                    tot=tot+1
-                    if tot>10:
-                        break 
-                    illust = illusts[random.randint(0, illusts.__len__() - 1)]
-                    img_pid = illust['id']
-                    path=await PixivRanking.get_by_id(img_pid,flag)
-
-                likes=path[1]
-                path=path[0]  
-                if path=="R-18":
-                    await pixiv.finish(f"这个群没有开启18+")
-                if path=="error":
-                    await pixiv.send(f"没有这个图QAQ {img_pid}")
-                else :
-                    try:
-                        await pixiv.send(f"like数量:{likes} pid:{img_pid}")
-                        await pixiv.send(MessageSegment.image("file:///"+path))
-                    except:
-                        deal_unable(path[0:path.rfind("\\")+1],path[path.rfind("\\")+1:])
-                        await pixiv.send(f"这个图被吞了，对不起喵{img_pid}")
-                        await pixiv.send(MessageSegment.image("file:///"+path[0:path.rfind("\\")+1]+"tmp.png"))
+        pixiv_url = 'http://127.0.0.1:8000/api/image'
+        data={'offset':0,'limit':10000,"tag":[tag]}
+        response = requests.post(pixiv_url, json=data)
+        result = response.json()
+        illusts=result["images"]
+        illust=illusts[random.randint(0,illusts.__len__()-1)]
+        print(illust)
+        await pixiv.send(f"pid:{illust['pid']}  author:{illust['author']}")
+        logger.info("file:///"+illust["path"]+"\\"+illust["name"])
+        try:
+            await pixiv.send(MessageSegment.image("file:///"+illust["path"]+"\\"+illust["name"]))
+        except:
+            deal_unable(illust["path"]+"\\",illust["name"])
+            await pixiv.send(f"这个图被吞了，对不起喵{illust['pid']}")
+            await pixiv.send(MessageSegment.image("file:///"+illust["path"]+"\\"+"tmp.png"))

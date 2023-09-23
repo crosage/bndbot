@@ -1,5 +1,6 @@
-import os
+import os,re
 import random
+from PIL import Image,ImageFilter
 import nonebot
 from PIL import Image
 from nonebot import on_command
@@ -7,9 +8,9 @@ from nonebot.matcher import Matcher
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.message import MessageSegment
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 from nonebot.log import logger
-
+import requests
 
 lib_path=nonebot.get_driver().config.pixiv_lib_path
 mylib=os.listdir(lib_path)
@@ -33,12 +34,29 @@ async def work(event:Event,matcher:Matcher):
     bot,=get_bots().values()
     image_id=random.randint(0,sz-1)
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"pixiv_from_library")==0:
-        await pixiv_from_lib.finish(None)
+    # if isInGroup(group,"pixiv_from_library")==0:
+        # await pixiv_from_lib.finish(None)
+    pattern=r"(\d+)_"
+    match=re.search(pattern,mylib[image_id])
+    # print(match.group(1))
+    logger.error(mylib[image_id])
+    pixiv_url = f'http://127.0.0.1:8000/api/image/{match.group(1)}'
+    response = requests.get(pixiv_url)
+    logger.warning(response.json())
+    result=response.json()
+    tags=result["tags"]
     try :
-        await pixiv_from_lib.send(mylib[image_id])
-        await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"\\{mylib[image_id]}"))
-        logger.error(f"{mylib[image_id]}")
+        if "R-18" in tags:
+            input_image=Image.open(lib_path+f"\\{mylib[image_id]}")
+            blurred_image=input_image.filter(ImageFilter.GaussianBlur(radius=10))
+            blurred_image.save(lib_path+f"\\blurred_image.jpg")
+            await pixiv_from_lib.send(mylib[image_id]+"\n"+f"tags:{tags}")
+            await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"\\blurred_image.jpg"))
+            logger.error("R-18 lz")
+        else :
+            await pixiv_from_lib.send(mylib[image_id]+"\n"+f"tags:{tags}")
+            await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"\\{mylib[image_id]}"))
+            logger.error(f"{mylib[image_id]}")
     except :
         
         await pixiv_from_lib.send(MessageSegment.text(f"图片发送失败，可能因为被吞{mylib[image_id]}\n稍后可能发一张处理过的图"))

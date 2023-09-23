@@ -3,15 +3,12 @@ import random
 from nonebot.plugin import on_keyword
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..management_module.is_in_group import isInGroup
 from nonebot.log import logger
 
 jrrp=on_keyword(['jrrp','今日人品'],priority=20)
 @jrrp.handle()
 async def jrrp_handle(bot:Bot,event:Event):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"jrrp")==0:
-        await jrrp.finish(None)
     user_id=event.get_user_id()
     rp=getit(user_id)
     msg=Message(f'[CQ:at,qq={user_id}]'+rp)

@@ -3,7 +3,7 @@ import random
 from nonebot.plugin import on_keyword
 from nonebot.adapters.onebot.v11 import Bot,Event
 from nonebot.adapters.onebot.v11.message import Message
-from ..management_module.is_in_group import isInGroup
+from ..management_module.management_db_operations import is_function_enabled
 from nonebot.plugin.on import on_fullmatch
 from nonebot.adapters.onebot.v11.message import Message,MessageSegment
 from nonebot.log import logger
@@ -12,7 +12,7 @@ import os
 @hamu.handle()
 async def hamu_handle(bot:Bot,event:Event):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"hamu")==0:
+    if is_function_enabled(group, "hamu")==0:
         await hamu.finish(None)
     filename=os.getcwd()+"\\awesomebot\\plugins\\hamu.gif"
     await hamu.send("哈姆，哈姆，哈姆")

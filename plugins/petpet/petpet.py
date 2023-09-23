@@ -10,8 +10,8 @@ from nonebot.params import Arg,CommandArg,ArgPlainText #param 参数，对参数
 from PIL import Image
 from nonebot.params import ArgStr
 from ..management_module.uitls import messageTools
-from ..configs import petpet_file_path,pixiv_preview_path
-from ..management_module.is_in_group import isInGroup
+from ..configs import petpet_frameurl
+from ..management_module.management_db_operations import is_function_enabled
 from urllib.request import urlretrieve
 import os
 
@@ -19,7 +19,7 @@ petpet=on_command("petpet",aliases={"摸摸"})
 @petpet.handle()
 async def work(event:Event,matcher:Matcher,state:T_State,cmd_message:Message=CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
-    if isInGroup(group,"petpet")==0:
+    if is_function_enabled(group, "petpet")==0:
         await petpet.finish(None)
     at_list=messageTools(message=cmd_message).get_all_at_qq()
     print(f"{at_list}")
