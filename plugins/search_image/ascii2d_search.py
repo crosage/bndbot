@@ -28,7 +28,9 @@ def dealer(data):
     thumbUrl=data.find("img")
     thumbUrl="https://ascii2d.net"+thumbUrl["src"]
     if infos:
+        logger.info(infos)
         h6=infos.find("h6")
+        external=infos.find("div",{"external"})
         if h6:
             # 图片来源
             small=h6.find("small")
@@ -36,6 +38,13 @@ def dealer(data):
             links=h6.find("a")
             name=links.string
             return Ascii2dImg(name,thumbUrl,links["href"],small.string)
+        elif external:
+            links=external.find("a")
+            name=links.string
+            logger.warning("********")
+            logger.warning(links)
+            logger.warning(name)
+            return Ascii2dImg(name,thumbUrl,links["href"],"\ntwitter\n")
 
             
 search_image=on_command("搜图")
@@ -68,6 +77,7 @@ async def search_image_handler(bot:Bot,event:Event, args:Message=CommandArg()):
         )
         print(bovw.url)
         soup=BeautifulSoup(bovw.text,features="html.parser")
+        print(bovw.text)
         blocks=soup.find_all("div",{'class': 'row item-box'})
         msgs=[]
         try:
@@ -77,17 +87,20 @@ async def search_image_handler(bot:Bot,event:Event, args:Message=CommandArg()):
                 if cnt==6:
                     break
                 logger.warning("开始处理")
+                logger.error("i=***********")
+                logger.warning(i)
+                logger.error("i=************")
                 ascii2dImg=dealer(i)
                 logger.warning("处理结束")
                 if ascii2dImg==None:
                     continue
 
                 msg=(
+                    MessageSegment.text("标题:"+ascii2dImg.name)+
                     MessageSegment.image(ascii2dImg.thumbUrl)+
                     MessageSegment.text("来源:"+ascii2dImg.source)+
                     MessageSegment.text(ascii2dImg.url)
                 )
-                search_image.finish(msg)
                 logger.error(type(msg))
                 tmp={
                         "type":"node",
