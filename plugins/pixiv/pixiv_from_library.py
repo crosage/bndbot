@@ -16,7 +16,11 @@ lib_path=nonebot.get_driver().config.pixiv_lib_path
 mylib=os.listdir(lib_path)
 sz=len(mylib)
 
+
 def deal_unable(path,filename):#图库地址和文件名
+    """
+    处理发送不能发送的图片，绕过腾讯检测
+    """
     img=Image.open(path+filename)
     h=img.height
     w=img.width
@@ -25,6 +29,13 @@ def deal_unable(path,filename):#图库地址和文件名
     logger.error(path+f"/tmp.png")
     img.save(path+f"/tmp.png")
 
+def gaussian_blur(path,filename):
+    """
+    为图片添加高斯模糊
+    """
+    img=Image.open(path+filename)
+    blurred_image=img.filter(ImageFilter.GaussianBlur(radius=10))
+    blurred_image.save(path+f"\\blurred_image.png")
 
 
 pixiv_from_lib=on_command("来张",aliases={"色图","涩图","laizhang","setu","lz"})
@@ -34,8 +45,8 @@ async def work(event:Event,matcher:Matcher):
     bot,=get_bots().values()
     image_id=random.randint(0,sz-1)
     _,group,qq=str(event.get_session_id()).split("_")
-    # if isInGroup(group,"pixiv_from_library")==0:
-        # await pixiv_from_lib.finish(None)
+    if is_function_enabled(group,"lz") is None:
+        await pixiv_from_lib.finish(None)
     pattern=r"(\d+)_"
     match=re.search(pattern,mylib[image_id])
     # print(match.group(1))
@@ -47,11 +58,9 @@ async def work(event:Event,matcher:Matcher):
     tags=result["tags"]
     try :
         if "R-18" in tags:
-            input_image=Image.open(lib_path+f"\\{mylib[image_id]}")
-            blurred_image=input_image.filter(ImageFilter.GaussianBlur(radius=10))
-            blurred_image.save(lib_path+f"\\blurred_image.jpg")
+            gaussian_blur(lib_path+"\\",f"{mylib[image_id]}")
             await pixiv_from_lib.send(mylib[image_id]+"\n"+f"tags:{tags}")
-            await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"\\blurred_image.jpg"))
+            await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"\\blurred_image.png"))
             logger.error("R-18 lz")
         else :
             await pixiv_from_lib.send(mylib[image_id]+"\n"+f"tags:{tags}")
@@ -60,5 +69,6 @@ async def work(event:Event,matcher:Matcher):
     except :
         
         await pixiv_from_lib.send(MessageSegment.text(f"图片发送失败，可能因为被吞{mylib[image_id]}\n稍后可能发一张处理过的图"))
-        deal_unable(lib_path,f"/{mylib[image_id]}")
-        await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"/tmp.png"))
+        gaussian_blur(lib_path+"\\",f"{mylib[image_id]}")
+        # deal_unable(lib_path,f"/{mylib[image_id]}")
+        await pixiv_from_lib.send(MessageSegment.image("file:///"+lib_path+f"\\blurred_image.png"))

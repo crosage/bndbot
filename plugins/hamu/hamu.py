@@ -12,7 +12,7 @@ import os
 @hamu.handle()
 async def hamu_handle(bot:Bot,event:Event):
     _,group,qq=str(event.get_session_id()).split("_")
-    if is_function_enabled(group, "hamu")==0:
+    if is_function_enabled(group, "hamu") is None:
         await hamu.finish(None)
     filename=os.getcwd()+"\\awesomebot\\plugins\\hamu.gif"
     await hamu.send("哈姆，哈姆，哈姆")

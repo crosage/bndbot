@@ -41,9 +41,10 @@ def is_function_enabled(group_num:int, functions:str)->int:
         with sqlite3.connect(db_file) as conn:
             cur=conn.cursor()
             sql=f"select * from GroupFunctionPermission where groupnum=? and function=?"
-            tmp=cur.execute(sql,(group_num,functions))
-            logger.warning(tmp)
-            return tmp
+            cur.execute(sql,(group_num,functions))
+            result=cur.fetchone()
+            return result
+
 def add_function(name:str):
     """
     往功能表中添加功能

@@ -19,7 +19,7 @@ petpet=on_command("petpet",aliases={"摸摸"})
 @petpet.handle()
 async def work(event:Event,matcher:Matcher,state:T_State,cmd_message:Message=CommandArg()):
     _,group,qq=str(event.get_session_id()).split("_")
-    if is_function_enabled(group, "petpet")==0:
+    if is_function_enabled(group, "petpet") is None:
         await petpet.finish(None)
     at_list=messageTools(message=cmd_message).get_all_at_qq()
     print(f"{at_list}")

@@ -23,7 +23,7 @@ tarot=on_fullmatch(msg=["tarot","塔罗牌"])
 @tarot.handle()
 async def tarot_handle(event:Event,matcher:Matcher):
     _,group,qq=str(event.get_session_id()).split("_")
-    if is_function_enabled(group, "tarot")==0:
+    if is_function_enabled(group, "tarot") is None:
         await tarot.finish(None)
     card = random.randint(0,21)
     # 随机正逆

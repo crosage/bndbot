@@ -17,7 +17,7 @@ otto=on_command("电棍",aliases={"活字印刷"})
 async def otto_handle(bot:Bot,event:Event,args:Message=CommandArg()):
     text=str(args)
     _,group,qq=str(event.get_session_id()).split("_")
-    if is_function_enabled(group, "huoziyinshua")==0:
+    if is_function_enabled(group, "huoziyinshua") is None:
         await otto.finish(None)
     text=text.replace("\n","")
     text=text.replace("\r","")

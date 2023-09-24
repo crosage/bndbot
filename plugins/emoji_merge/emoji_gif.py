@@ -24,7 +24,7 @@ emojigif=on_regex(
 @emojigif.handle()
 async def mix(event:Event,msg:dict=RegexDict()):
     _,group,qq=str(event.get_session_id()).split("_")
-    if is_function_enabled(group, "emoji_gif")==0:
+    if is_function_enabled(group, "emoji_gif") is None:
         await emojigif.finish(None)
     emoji_code1=msg["code1"]
     result=await gif_emoji(emoji_code1)

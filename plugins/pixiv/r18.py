@@ -28,7 +28,7 @@ pixiv_18_from_lib=on_command("18")
 async def work(event:Event,matcher:Matcher):
     image_id=random.randint(0,sz-1)
     _,group,qq=str(event.get_session_id()).split("_")
-    if is_function_enabled(group, "18")==0:
+    if is_function_enabled(group, "18") is None:
         await pixiv_18_from_lib.finish(None)
     try :
         await pixiv_18_from_lib.send(mylib[image_id])
