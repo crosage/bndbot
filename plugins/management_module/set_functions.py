@@ -14,7 +14,7 @@ async def setGroup_handle(matcher:Matcher,event:Event,args:Message=CommandArg())
     if text :
         matcher.set_arg("functions",args)
 
-@setGroup.got("functions",prompt="你想添加什么功能？")#设置参数functions 用Message存储Message类型的functions 用str存储字符串类型的name
+@setGroup.got("functions",prompt="你想添加什么功能？")
 async def handle_functions(event:Event,functions:Message=Arg(),name: str = ArgPlainText("functions")):
     _,group,qq=str(event.get_session_id()).split("_")
     logger.debug(f"in set_functions:{is_function_exist(name)}")
