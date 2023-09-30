@@ -17,7 +17,7 @@ DEFAULT_HEADERS = {
     "referer":"https://soutubot.moe/",
     "x-requested-with":"XMLHttpRequest"
 }
-downloadPath="D:\\bot\\awesomebot\\awesomebot\\plugins\\imagetmp\\"
+downloadPath="D:\\bot\\awesomebot\\awesomebot\\plugins\\assets\\imagetmp\\"
 
 search_hentai=on_command("搜本")
 @search_hentai.handle()
@@ -27,6 +27,7 @@ async def search_hentai_handler(bot:Bot,event:Event, args:Message=CommandArg()):
     for arg in args:
         if arg.type!="image":
             await search_hentai.finish("你没有发送图片")
+        print(arg)
         resp=requests.get(arg.data["url"])
         h=hash(resp.content)
         print(resp)

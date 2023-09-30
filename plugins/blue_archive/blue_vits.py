@@ -1,7 +1,4 @@
 import os
-import random
-import nonebot
-from PIL import Image
 from loguru import logger
 from nonebot import on_command
 from nonebot.matcher import Matcher
@@ -54,10 +51,11 @@ async def work(event: Event, matcher: Matcher, args: Message = CommandArg()):
 
 @blue_vits.got("vits_model", prompt=get_vits_have())
 async def del_model_choose(args: str = ArgPlainText("vits_model")):
-    arg = str(args).split(" ")
+    arg = str(args).split(" ",2)
+    # logger.warning(test)
     logger.warning(arg)
     if len(arg) == 2:
-        model, text = str(args).split(" ")
+        model, text = str(args).split(" ",1)
         model = dict[f"{model}"]
         logger.warning(f"{model} {text}")
         path = os.path.abspath(os.path.dirname(__file__))
@@ -68,13 +66,13 @@ async def del_model_choose(args: str = ArgPlainText("vits_model")):
         await blue_vits.send(
             MessageSegment.record(f"file:///D:/bot/awesomebot/awesomebot/plugins/blue_archive/vits-models/output.wav"))
     else:
-        r, model, text = str(args).split(" ")
+        r, model, text = str(args).split(" ",2)
         model = dict[f"{model}"]
         logger.warning(f"{model} {text}")
         path = os.path.abspath(os.path.dirname(__file__))
         print(path)
-        os.system(f"python {path}\\vits-models\\cli.py --text '{text}' --model_choose {model} --language 1")
-        print(f"python {path}\\vits-models\\cli.py --text '{text}' --model_choose '{model}' --language 1")
+        os.system(f"python {path}\\vits-models\\cli.py --text \"{text}\" --model_choose {model} --language 1")
+        print(f"python {path}\\vits-models\\cli.py --text \"{text}\" --model_choose '{model}' --language 1")
         print(f"{text}")
         await blue_vits.send(
             MessageSegment.record(f"file:///D:/bot/awesomebot/awesomebot/plugins/blue_archive/vits-models/output.wav"))

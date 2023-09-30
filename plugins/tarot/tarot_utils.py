@@ -2,6 +2,7 @@
 塔罗牌部分修改自omega_miya
 
 """
+import nonebot
 from PIL import Image, ImageDraw, ImageFont
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Event
@@ -23,6 +24,7 @@ tarot=on_fullmatch(msg=["tarot","塔罗牌"])
 @tarot.handle()
 async def tarot_handle(event:Event,matcher:Matcher):
     _,group,qq=str(event.get_session_id()).split("_")
+    bot,=nonebot.get_bots().values()
     if is_function_enabled(group, "tarot") is None:
         await tarot.finish(None)
     card = random.randint(0,21)
